@@ -1,0 +1,221 @@
+:root, body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+/* DualTabPanel base styles */
+.dualtab-panel {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  color: #374151;
+  background-color: #f9fafb;
+}
+
+.dualtab-panel--horizontal {
+  flex-direction: row;
+}
+
+.dualtab-panel--vertical {
+  flex-direction: column;
+}
+
+/* Panel Wrapper styles */
+.dualtab-panel__panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* TabContainer styles */
+.tab-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.tab-header {
+  display: flex;
+  background-color: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+  min-height: 40px;
+}
+
+.tab-header__item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: transparent;
+  border: none;
+  border-right: 1px solid #e5e7eb;
+  cursor: pointer;
+  font-size: 14px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  position: relative;
+  min-width: 0;
+}
+
+.tab-header__item:hover {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.tab-header__item--active {
+  background-color: #ffffff;
+  color: #111827;
+  font-weight: 500;
+}
+
+.tab-header__item--active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #3b82f6;
+}
+
+.tab-header__title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 8px;
+}
+
+.tab-header__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: all 0.2s ease;
+}
+
+.tab-header__close:hover {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.tab-content {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+}
+
+/* PanelSplitter styles */
+.panel-splitter {
+  background-color: #e5e7eb;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.panel-splitter:hover,
+.panel-splitter--dragging {
+  background-color: #3b82f6;
+}
+
+.panel-splitter--horizontal {
+  width: 4px;
+  cursor: col-resize;
+  margin: 0 2px;
+}
+
+.panel-splitter--vertical {
+  height: 4px;
+  cursor: row-resize;
+  margin: 2px 0;
+}
+
+/* Responsive support */
+@media (max-width: 768px) {
+  .tab-header__item {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .tab-content {
+    padding: 12px;
+  }
+  
+  .panel-splitter--horizontal {
+    width: 6px;
+    margin: 0 3px;
+  }
+  
+  .panel-splitter--vertical {
+    height: 6px;
+    margin: 3px 0;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .dualtab-panel {
+    color: #f3f4f6;
+    background-color: #111827;
+  }
+  
+  .tab-container {
+    background-color: #1f2937;
+    border-color: #374151;
+  }
+  
+  .tab-header {
+    background-color: #374151;
+    border-bottom-color: #4b5563;
+  }
+  
+  .tab-header__item {
+    color: #d1d5db;
+    border-right-color: #4b5563;
+  }
+  
+  .tab-header__item:hover {
+    background-color: #4b5563;
+    color: #f3f4f6;
+  }
+  
+  .tab-header__item--active {
+    background-color: #1f2937;
+    color: #f9fafb;
+  }
+  
+  .tab-header__close {
+    color: #9ca3af;
+  }
+  
+  .tab-header__close:hover {
+    background-color: #4b5563;
+    color: #d1d5db;
+  }
+  
+  .panel-splitter {
+    background-color: #4b5563;
+  }
+  
+  .panel-splitter:hover,
+  .panel-splitter--dragging {
+    background-color: #3b82f6;
+  }
+} 
