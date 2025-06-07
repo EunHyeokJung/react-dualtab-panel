@@ -5,6 +5,8 @@
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
 
+https://github.com/user-attachments/assets/f30fe585-bf6a-4d87-86e8-c7fd1474dc1e
+
 > 🚧 **개발 중** - 이 프로젝트는 아직 개발 중이에요! 뚝딱뚝딱
 
 독립적인 탭 시스템을 가진 듀얼 패널 인터페이스를 위한 React 컴포넌트에요. 관리자 대시보드, IDE 같은 분할 화면이 필요한 애플리케이션에 적합해요.
