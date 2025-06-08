@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { PanelSplitterProps } from '../../types';
 
 export function PanelSplitter({
@@ -7,8 +7,12 @@ export function PanelSplitter({
   minSize = 100,
   className = '',
 }: PanelSplitterProps) {
+  const [isDragging, setIsDragging] = useState(false);
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
+    setIsDragging(true);
+    
     const container = (e.target as HTMLElement).parentElement;
     
     if (!container) {
@@ -39,6 +43,8 @@ export function PanelSplitter({
     };
 
     const handleMouseUp = () => {
+      setIsDragging(false);
+      
       try {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
@@ -58,6 +64,7 @@ export function PanelSplitter({
   const splitterClasses = [
     'panel-splitter',
     `panel-splitter--${orientation}`,
+    isDragging && 'panel-splitter--dragging',
     className
   ].filter(Boolean).join(' ');
 
