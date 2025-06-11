@@ -8,6 +8,7 @@ export function TabContainer({
   className = '',
   dragState,
   dragEvents,
+  allowTabSharing = true,
 }: TabContainerProps) {
   const handleTabSelect = (tabId: string) => {
     onPanelChange({
@@ -89,6 +90,7 @@ export function TabContainer({
             panelId={panel.id}
             dragState={dragState}
             dragEvents={dragEvents}
+            allowTabSharing={allowTabSharing}
           />
         )}
       </div>
@@ -106,6 +108,7 @@ interface EmptyPanelDropZoneProps {
   panelId: string;
   dragState?: DragState;
   dragEvents?: DragEvents;
+  allowTabSharing?: boolean;
 }
 
 function TabHeader({ 
@@ -181,17 +184,28 @@ function FlexDropZone({ index, panelId, dragEvents }: DropZoneProps) {
   );
 }
 
-function EmptyPanelDropZone({ panelId, dragState, dragEvents }: EmptyPanelDropZoneProps) {
+function EmptyPanelDropZone({ panelId, dragState, dragEvents, allowTabSharing }: EmptyPanelDropZoneProps) {
   const isDragActive = dragState?.isDragging;
   const isBeingDraggedOver = dragState?.dragOverPanelId === panelId && 
                              dragState?.dragOverTabIndex === 0;
   
-  // CSS 클래스 기반으로 스타일 결정
+  // 복잡한 조건들을 명명된 변수로 분리 (토스 프론트앤드 코드 룰 참고했음)
+  const isInDragOverState = isBeingDraggedOver;
+  const isInDragActiveState = isDragActive && !isBeingDraggedOver;
+  
+  // allowTabSharing 조건에 따라 다른 클래스 조합
   const dropZoneClasses = [
     'tab-content__empty',
-    isBeingDraggedOver ? 'tab-content__empty--drag-over' : '',
-    isDragActive && !isBeingDraggedOver ? 'tab-content__empty--drag-active' : ''
+    isInDragOverState && 'tab-content__empty--drag-over',
+    isInDragActiveState && 'tab-content__empty--drag-active'
   ].filter(Boolean).join(' ');
+  
+  // allowTabSharing에 따라 다른 메시지 표시
+  const getDropMessage = () => {
+    if (!isDragActive) return 'Empty panel';
+    if (!allowTabSharing) return 'You can\'t move tabs between panels';
+    return 'Drop tab here';
+  };
   
   return (
     <div 
@@ -200,7 +214,7 @@ function EmptyPanelDropZone({ panelId, dragState, dragEvents }: EmptyPanelDropZo
       onDragLeave={isDragActive && dragEvents ? dragEvents.onDragLeave : undefined}
       onDrop={isDragActive && dragEvents ? (e) => dragEvents.onDrop(e, 0, panelId) : undefined}
     >
-      {isDragActive ? 'Drop tab here' : 'Empty panel'}
+      {getDropMessage()}
     </div>
   );
 } 

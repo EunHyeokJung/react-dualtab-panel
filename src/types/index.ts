@@ -34,6 +34,7 @@ export interface TabContainerProps {
   className?: string;
   dragState?: DragState;
   dragEvents?: DragEvents;
+  allowTabSharing?: boolean;
 }
 
 export interface PanelSplitterProps {

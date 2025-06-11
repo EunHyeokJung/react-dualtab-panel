@@ -60,10 +60,10 @@ export function DemoApp() {
             <h2>How to Use</h2>
             <div style={{ backgroundColor: '#f3f4f6', padding: '16px', borderRadius: '8px', marginTop: '16px' }}>
               <h3>1. Click Menu Items</h3>
-              <p>Click on desired pages from the left sidebar menu.</p>
+              <p>• Click on desired pages from the left sidebar menu</p>
               
               <h3>2. Manage Tabs</h3>
-              <p>Close tabs using the X button on each tab.</p>
+              <p>• Close tabs using the X button on each tab</p>
               
               <h3>3. Drag & Drop Tabs</h3>
               <p>• Drag tabs to reorder</p>
@@ -71,10 +71,11 @@ export function DemoApp() {
               <p>• Drop tabs into empty panels to populate</p>
               
               <h3>4. Resize Panels</h3>
-              <p>Drag the center divider to adjust panel sizes.</p>
+              <p>• Drag the center divider to adjust panel sizes.</p>
               
-              <h3>5. Change Layout</h3>
-              <p>Switch between horizontal/vertical layout using the header controls.</p>
+              <h3>5. Panel Options</h3>
+              <p>• Switch between horizontal/vertical layout using the header controls</p>
+              <p>• Use the "Allow tab sharing" checkbox to control whether tabs can be moved between panels</p>
             </div>
           </div>
         )},

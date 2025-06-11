@@ -58,6 +58,7 @@ export function DualTabPanel({
           orientation={orientation}
           dragState={dragState}
           dragEvents={dragEvents}
+          allowTabSharing={allowTabSharing}
         />
       </div>
       
@@ -74,6 +75,7 @@ export function DualTabPanel({
           orientation={orientation}
           dragState={dragState}
           dragEvents={dragEvents}
+          allowTabSharing={allowTabSharing}
         />
       </div>
     </div>
