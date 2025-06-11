@@ -16,8 +16,8 @@ interface SmoothScrollConfig {
 interface SmoothScrollReturn {
   /** 부드러운 스크롤을 실행하는 함수 */
   smoothScrollTo: (targetScroll: number, containerRef: React.RefObject<HTMLElement | null>) => void;
-  /** 마우스 휠 이벤트 핸들러 */
-  handleWheelScroll: (e: React.WheelEvent, containerRef: React.RefObject<HTMLElement | null>, needsScroll: boolean) => void;
+  /** 스크롤 이벤트 리스너 설정 함수 */
+  setupScrollListener: (containerRef: React.RefObject<HTMLElement | null>, needsScroll: boolean) => () => void;
   /** 훅 정리 함수 (컴포넌트 언마운트 시 호출) */
   cleanup: () => void;
 }
@@ -81,24 +81,34 @@ export function useSmoothScroll(config: SmoothScrollConfig = {}): SmoothScrollRe
   }, [animationSpeed, completionThreshold]);
 
   /**
-   * 마우스 휠 스크롤 이벤트 핸들러
+   * 스크롤 이벤트 리스너 설정 함수
    */
-  const handleWheelScroll = useCallback((
-    e: React.WheelEvent, 
+  const setupScrollListener = useCallback((
     containerRef: React.RefObject<HTMLElement | null>, 
     needsScroll: boolean
   ) => {
-    if (!containerRef.current || !needsScroll) return;
+    if (!containerRef.current || !needsScroll) return () => {};
     
-    e.preventDefault();
-    const scrollContainer = containerRef.current;
-    const scrollAmount = e.deltaY > 0 ? TAB_SCROLL.AMOUNT : -TAB_SCROLL.AMOUNT;
+    const element = containerRef.current;
     
-    // 목표 스크롤 위치 계산 (연속 스크롤 지원)
-    const currentTarget = targetScrollRef.current || scrollContainer.scrollLeft;
-    const newTarget = currentTarget + scrollAmount;
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const scrollAmount = e.deltaY > 0 ? TAB_SCROLL.AMOUNT : -TAB_SCROLL.AMOUNT;
+      
+      // 목표 스크롤 위치 계산 (연속 스크롤 지원)
+      const currentTarget = targetScrollRef.current || element.scrollLeft;
+      const newTarget = currentTarget + scrollAmount;
+      
+      smoothScrollTo(newTarget, containerRef);
+    };
     
-    smoothScrollTo(newTarget, containerRef);
+    // passive: false로 preventDefault 허용
+    element.addEventListener('wheel', handleWheel, { passive: false });
+    
+    // cleanup 함수 반환
+    return () => {
+      element.removeEventListener('wheel', handleWheel);
+    };
   }, [smoothScrollTo]);
 
   /**
@@ -113,7 +123,7 @@ export function useSmoothScroll(config: SmoothScrollConfig = {}): SmoothScrollRe
 
   return {
     smoothScrollTo,
-    handleWheelScroll,
+    setupScrollListener,
     cleanup
   };
 }

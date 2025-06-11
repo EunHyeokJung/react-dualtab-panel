@@ -32,7 +32,7 @@ export function TabContainer({
   const [needsScroll, setNeedsScroll] = useState(false);
 
   // 부드러운 스크롤 훅 사용
-  const { handleWheelScroll: handleSmoothWheelScroll, cleanup } = useSmoothScroll();
+  const { setupScrollListener, cleanup } = useSmoothScroll();
 
   // 탭 레이아웃 재계산 함수
   const recalculateTabLayout = useCallback(() => {
@@ -83,10 +83,11 @@ export function TabContainer({
     };
   }, [recalculateTabLayout, cleanup]);
 
-  // 마우스 휠 스크롤 이벤트 핸들러
-  const handleWheelScroll = useCallback((e: React.WheelEvent) => {
-    handleSmoothWheelScroll(e, tabHeaderRef, needsScroll);
-  }, [handleSmoothWheelScroll, needsScroll]);
+  // 스크롤 이벤트 리스너 설정
+  useEffect(() => {
+    const removeScrollListener = setupScrollListener(tabHeaderRef, needsScroll);
+    return removeScrollListener;
+  }, [setupScrollListener, needsScroll]);
 
   const handleTabSelect = (tabId: string) => {
     onPanelChange({
@@ -135,7 +136,6 @@ export function TabContainer({
         <div 
           ref={tabHeaderRef}
           className={`tab-header ${needsScroll ? 'tab-header--scrollable' : ''}`}
-          onWheel={handleWheelScroll}
         >
           {panel.tabs.map((tab, index) => (
             <TabHeader
