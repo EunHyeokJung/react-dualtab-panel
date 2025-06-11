@@ -1,5 +1,5 @@
 import React from 'react';
-import type { TabContainerProps, Tab, DragState, DragEvents, TabHeaderProps } from '../../types';
+import type { TabContainerProps, DragState, DragEvents, TabHeaderProps } from '../../types';
 
 export function TabContainer({
   panel,

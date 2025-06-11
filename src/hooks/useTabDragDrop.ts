@@ -105,7 +105,7 @@ export function useTabDragDrop({
       });
     }, []),
 
-    onDragEnd: useCallback((_: React.DragEvent) => {
+    onDragEnd: useCallback(() => {
       resetDragState();
     }, [resetDragState]),
 
