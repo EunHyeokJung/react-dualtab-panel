@@ -107,26 +107,31 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  margin-right: 8px;
+  margin-right: 4px; /* Close 버튼과의 간격 조정 */
 }
 
 .tab-header__close {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
   background-color: transparent;
   border: none;
   cursor: pointer;
   color: #9ca3af;
   transition: all 0.2s ease;
+  margin-left: 4px; /* 텍스트와 간격 */
 }
 
 .tab-header__close:hover {
   background-color: #f3f4f6;
   color: #6b7280;
+}
+
+.tab-header__close-icon {
+  pointer-events: none; /* TODO:버튼 클릭 방해 방지용 속성, 제거할지 검토 필요함 */
 }
 
 /* 드래그앤드롭 스타일 */

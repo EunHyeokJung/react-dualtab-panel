@@ -1,5 +1,6 @@
 import React from 'react';
 import type { TabContainerProps, DragState, DragEvents, TabHeaderProps } from '../../types';
+import { CloseIcon } from '@common/icons/CloseIcon';
 
 export function TabContainer({
   panel,
@@ -165,7 +166,7 @@ function TabHeader({
             title="Close tab"
             aria-label={`Close ${tab.title} tab`}
           >
-            ✕
+            <CloseIcon className="tab-header__close-icon" />
           </button>
         )}
       </button>
