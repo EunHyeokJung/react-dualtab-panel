@@ -1,5 +1,5 @@
 import React from 'react';
-import type { TabContainerProps, Tab, DragState, DragEvents } from '../../types';
+import type { TabContainerProps, Tab, DragState, DragEvents, TabHeaderProps } from '../../types';
 
 export function TabContainer({
   panel,
@@ -77,7 +77,6 @@ export function TabContainer({
             <FlexDropZone
               index={panel.tabs.length}
               panelId={panel.id}
-              dragState={dragState}
               dragEvents={dragEvents}
             />
           )}
@@ -97,21 +96,9 @@ export function TabContainer({
   );
 }
 
-interface TabHeaderProps {
-  tab: Tab;
-  isActive: boolean;
-  onSelect: () => void;
-  onClose?: () => void;
-  index: number;
-  panelId: string;
-  dragState?: DragState;
-  dragEvents?: DragEvents;
-}
-
 interface DropZoneProps {
   index: number;
   panelId: string;
-  dragState?: DragState;
   dragEvents?: DragEvents;
 }
 
@@ -159,7 +146,7 @@ function TabHeader({
         onDragOver={dragEvents ? (e) => dragEvents.onDragOver(e, index, panelId) : undefined}
         onDragLeave={dragEvents?.onDragLeave}
         onDrop={dragEvents ? (e) => dragEvents.onDrop(e, index, panelId) : undefined}
-        style={{ touchAction: 'none' }} // 모바일 터치 최적화 (모바일 지원 여부는 검토 필요할 것 같긴 함)
+        style={{ touchAction: 'none' }} // 모바일 터치 최적화
       >
         <span className="tab-header__title">
           {tab.title}

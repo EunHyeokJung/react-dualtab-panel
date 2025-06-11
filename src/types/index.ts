@@ -48,7 +48,10 @@ export interface TabHeaderProps {
   isActive: boolean;
   onSelect: () => void;
   onClose?: () => void;
-  className?: string;
+  index: number;
+  panelId: string;
+  dragState?: DragState;
+  dragEvents?: DragEvents;
 }
 
 // 드래그앤드롭 관련 타입들
@@ -74,4 +77,4 @@ export interface DragEvents {
   onDragOver: (e: React.DragEvent, targetIndex: number, panelId: string) => void;
   onDragLeave: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, targetIndex: number, panelId: string) => void;
-} 
+}
