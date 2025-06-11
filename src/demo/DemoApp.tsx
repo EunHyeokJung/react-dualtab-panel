@@ -70,10 +70,15 @@ export function DemoApp() {
               <p>• Drag tabs between panels to move</p>
               <p>• Drop tabs into empty panels to populate</p>
               
-              <h3>4. Resize Panels</h3>
+              <h3>4. Tab Scrolling</h3>
+              <p>• When tabs exceed panel width, they automatically adjust size</p>
+              <p>• Use mouse wheel to scroll through tabs horizontally</p>
+              <p>• Try the "Add 10 Test Tabs" button above to see scrolling in action</p>
+              
+              <h3>5. Resize Panels</h3>
               <p>• Drag the center divider to adjust panel sizes.</p>
               
-              <h3>5. Panel Options</h3>
+              <h3>6. Panel Options</h3>
               <p>• Switch between horizontal/vertical layout using the header controls</p>
               <p>• Use the "Allow tab sharing" checkbox to control whether tabs can be moved between panels</p>
             </div>
@@ -174,8 +179,42 @@ export function DemoApp() {
             </label>
           </div>
           
-          <div style={{ fontSize: '12px', color: '#6b7280' }}>
-            Active tabs: {panels[0].tabs.length + panels[1].tabs.length}
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <button
+              onClick={() => {
+                // 테스트용: 많은 탭 추가
+                const newTabs = Array.from({ length: 10 }, (_, i) => ({
+                  id: `test-tab-${Date.now()}-${i}`,
+                  title: `Test Tab ${i + 1} - Very Long Title That Should Be Truncated`,
+                  content: <div style={{ padding: '20px' }}>Test content for tab {i + 1}</div>,
+                  closable: true
+                }));
+                
+                const updatedPanels: [typeof panels[0], typeof panels[1]] = [
+                  {
+                    ...panels[0],
+                    tabs: [...panels[0].tabs, ...newTabs],
+                    activeTabId: newTabs[0].id
+                  },
+                  panels[1]
+                ];
+                setPanels(updatedPanels);
+              }}
+              style={{
+                padding: '4px 8px',
+                fontSize: '12px',
+                borderRadius: '4px',
+                border: '1px solid #d1d5db',
+                backgroundColor: '#ffffff',
+                cursor: 'pointer'
+              }}
+            >
+              Add 10 Test Tabs
+            </button>
+            
+            <div style={{ fontSize: '12px', color: '#6b7280' }}>
+              Active tabs: {panels[0].tabs.length + panels[1].tabs.length}
+            </div>
           </div>
         </div>
       </div>
@@ -186,7 +225,7 @@ export function DemoApp() {
           <SideMenu onMenuClick={handleMenuClick} />
           
           {/* Dual tab panel */}
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
             <DualTabPanel
               panels={panels}
               onPanelsChange={setPanels}

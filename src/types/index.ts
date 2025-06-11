@@ -53,6 +53,7 @@ export interface TabHeaderProps {
   panelId: string;
   dragState?: DragState;
   dragEvents?: DragEvents;
+  width?: number;
 }
 
 // 드래그앤드롭 관련 타입들

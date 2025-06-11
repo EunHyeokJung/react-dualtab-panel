@@ -27,6 +27,8 @@ export function DualTabPanel({
     onSplitRatioChange?.(newRatio);
   };
 
+
+
   const handlePanelChange = (panelIndex: 0 | 1) => (updatedPanel: typeof panels[0]) => {
     const newPanels: [typeof panels[0], typeof panels[1]] = [...panels];
     newPanels[panelIndex] = updatedPanel;

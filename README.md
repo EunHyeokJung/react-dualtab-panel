@@ -27,12 +27,16 @@ https://github.com/user-attachments/assets/f30fe585-bf6a-4d87-86e8-c7fd1474dc1e
 사이드 프로젝트에 있던 코드를 옮기고 있어서, 아직 기본적인 기능만 구현되어 있어요.
 
 - **듀얼 독립 패널**: 각 패널은 독립적인 탭을 가져요
-- **탭 드래그앤드롭**: 탭 순서 변경 및 패널 간 이동 지원
+- **탭 드래그앤드롭**: 드래그 앤 드롭으로 탭의 순서 변경 및 패널 간 이동이 가능해요
   - **빈 패널 드롭 지원**: 모든 탭이 제거된 빈 패널에도 탭을 드롭할 수 있어요
   - **시각적 피드백**: 드래그 중 드롭 가능한 영역과 호버 상태를 명확하게 표시해요
   - **탭 공유 제어**: 패널 간 탭 이동을 허용/차단할 수 있어요
 - **레이아웃 지원**: 수평/수직 분할 레이아웃 변경이 가능해요
 - **크기 조절**: 패널 간 드래그로 크기 조절이 가능해요
+- **스마트 탭 관리**: 탭이 많아지면 자동으로 너비 조정 및 스크롤 지원
+  - **동적 탭 너비**: 패널 너비에 따라 탭 크기가 자동으로 조정돼요
+  - **마우스 휠 스크롤**: 탭이 많을 때 마우스 휠로 스크롤이 가능해요
+  - **시각적 스크롤 힌트**: 스크롤 가능한 상태에서 그라데이션 힌트 제공
 - **반응형**: 반응형 디자인으로 설계되어 있어요
 - **커스터마이징**: CSS 클래스 기반으로 완전한 스타일 커스터마이징 지원
 
@@ -138,6 +142,7 @@ function App() {
 
 /* 탭 헤더 */
 .tab-header { /* 탭 헤더 영역 */ }
+.tab-header--scrollable { /* 스크롤 가능한 탭 헤더 */ }
 .tab-header__item { /* 개별 탭 */ }
 .tab-header__item--active { /* 활성 탭 */ }
 .tab-header__item--dragging { /* 드래그 중인 탭 */ }
@@ -169,6 +174,30 @@ function App() {
 .tab-content__empty--drag-over {
   background-color: #e6f7ff;
   border: 2px solid #1890ff;
+}
+```
+
+### 탭 스크롤 커스터마이징 예시
+
+```css
+/* 탭 너비 커스터마이징 */
+.tab-header__item {
+  min-width: 100px; /* 최소 탭 너비 조정 */
+  max-width: 250px; /* 최대 탭 너비 조정 */
+}
+
+/* 스크롤바 커스터마이징 */
+.tab-header::-webkit-scrollbar {
+  height: 8px; /* 스크롤바 두께 조정 */
+}
+
+.tab-header::-webkit-scrollbar-thumb {
+  background-color: #007acc; /* 스크롤바 색상 변경 */
+}
+
+/* 스크롤 힌트 그라데이션 커스터마이징 */
+.tab-header--scrollable::before {
+  background: linear-gradient(to right, #your-color, transparent);
 }
 ```
 

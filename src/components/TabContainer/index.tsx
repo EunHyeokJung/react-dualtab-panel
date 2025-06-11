@@ -1,6 +1,22 @@
-import React from 'react';
-import type { TabContainerProps, DragState, DragEvents, TabHeaderProps } from '../../types';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+import type { TabContainerProps, TabHeaderProps } from '../../types';
+import type { DropZoneProps, EmptyPanelDropZoneProps } from '../../types/components';
 import { CloseIcon } from '@common/icons/CloseIcon';
+
+// 유틸리티 및 상수 임포트
+import { TAB_SCROLL } from '../../constants';
+import { 
+  calculateTabLayout,
+  isTabBeingDragged, 
+  isPositionBeingDraggedOver, 
+  isDragActive,
+  shouldShowDropIndicator,
+  getTabHeaderClasses, 
+  getFlexDropZoneClasses, 
+  getFlexDropZoneStyle,
+  getEmptyPanelDropZoneClasses,
+  getEmptyPanelDropMessage
+} from '../../utils';
 
 export function TabContainer({
   panel,
@@ -11,6 +27,73 @@ export function TabContainer({
   dragEvents,
   allowTabSharing = true,
 }: TabContainerProps) {
+  const tabHeaderRef = useRef<HTMLDivElement>(null);
+  const [tabWidths, setTabWidths] = useState<Record<string, number>>({});
+  const [needsScroll, setNeedsScroll] = useState(false);
+
+  // 탭 레이아웃 재계산 함수
+  const recalculateTabLayout = useCallback(() => {
+    if (!tabHeaderRef.current || panel.tabs.length === 0) return;
+    
+    // 드래그 중일 때는 스크롤 상태 계산을 건너뛰기
+    if (isDragActive(dragState)) return;
+
+    const headerElement = tabHeaderRef.current;
+    const containerWidth = headerElement.clientWidth;
+    const tabIds = panel.tabs.map(tab => tab.id);
+    
+    const { tabWidths, needsScroll } = calculateTabLayout(containerWidth, tabIds);
+    
+    setTabWidths(tabWidths);
+    setNeedsScroll(needsScroll);
+  }, [panel.tabs, dragState]);
+
+  // 탭 변경시 레이아웃 재계산
+  useEffect(() => {
+    recalculateTabLayout();
+  }, [recalculateTabLayout]);
+
+
+
+  // 패널 크기 변경 감지를 위한 ResizeObserver (debounced)
+  useEffect(() => {
+    if (!tabHeaderRef.current) return;
+
+    let timeoutId: number;
+
+    const resizeObserver = new ResizeObserver(() => {
+      // 이전 타이머 취소
+      clearTimeout(timeoutId);
+      
+      // 300ms 후에 레이아웃 재계산 (splitter 드래그 완료 후)
+      // 단, forceRecalculate가 있으면 이미 즉시 계산되었으므로 생략
+      timeoutId = setTimeout(() => {
+        recalculateTabLayout();
+      }, 300);
+    });
+
+    resizeObserver.observe(tabHeaderRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+      clearTimeout(timeoutId);
+    };
+  }, [recalculateTabLayout]);
+
+  // 마우스 휠 스크롤 지원
+  const handleWheelScroll = (e: React.WheelEvent) => {
+    if (!tabHeaderRef.current || !needsScroll) return;
+    
+    e.preventDefault();
+    const scrollContainer = tabHeaderRef.current;
+    const scrollAmount = e.deltaY > 0 ? TAB_SCROLL.AMOUNT : -TAB_SCROLL.AMOUNT;
+    
+    scrollContainer.scrollTo({
+      left: scrollContainer.scrollLeft + scrollAmount,
+      behavior: 'smooth'
+    });
+  };
+
   const handleTabSelect = (tabId: string) => {
     onPanelChange({
       ...panel,
@@ -55,7 +138,11 @@ export function TabContainer({
   return (
     <div className={containerClasses}>
       {panel.tabs.length > 0 && (
-        <div className="tab-header">
+        <div 
+          ref={tabHeaderRef}
+          className={`tab-header ${needsScroll ? 'tab-header--scrollable' : ''}`}
+          onWheel={handleWheelScroll}
+        >
           {panel.tabs.map((tab, index) => (
             <TabHeader
               key={tab.id}
@@ -67,21 +154,16 @@ export function TabContainer({
               onClose={tab.closable !== false ? () => handleTabClose(tab.id) : undefined}
               dragState={dragState}
               dragEvents={dragEvents}
+              width={tabWidths[tab.id]}
             />
           ))}
-          {/* 드롭 인디케이터는 탭 바로 뒤에, 드롭존은 남은 공간 전체 */}
-          {dragState?.isDragging && 
-           dragState.dragOverPanelId === panel.id && 
-           dragState.dragOverTabIndex === panel.tabs.length && (
-            <div className="tab-header__drop-indicator" />
-          )}
-          {dragState?.isDragging && (
-            <FlexDropZone
-              index={panel.tabs.length}
-              panelId={panel.id}
-              dragEvents={dragEvents}
-            />
-          )}
+          {/* 항상 렌더링하되 드래그 중이 아닐 때는 숨김 */}
+          <FlexDropZone
+            index={panel.tabs.length}
+            panelId={panel.id}
+            dragEvents={dragEvents}
+            dragState={dragState}
+          />
         </div>
       )}
       
@@ -99,18 +181,7 @@ export function TabContainer({
   );
 }
 
-interface DropZoneProps {
-  index: number;
-  panelId: string;
-  dragEvents?: DragEvents;
-}
 
-interface EmptyPanelDropZoneProps {
-  panelId: string;
-  dragState?: DragState;
-  dragEvents?: DragEvents;
-  allowTabSharing?: boolean;
-}
 
 function TabHeader({ 
   tab, 
@@ -120,24 +191,29 @@ function TabHeader({
   onSelect, 
   onClose, 
   dragState,
-  dragEvents 
+  dragEvents,
+  width
 }: TabHeaderProps) {
-  const isDragging = dragState?.draggedTabId === tab.id;
-  const isBeingDraggedOver = dragState?.dragOverPanelId === panelId && 
-                             dragState?.dragOverTabIndex === index;
+  const isDragging = isTabBeingDragged(dragState, tab.id);
+  const isBeingDraggedOver = isPositionBeingDraggedOver(dragState, panelId, index);
   
-  const headerClasses = [
-    'tab-header__item',
-    isActive ? 'tab-header__item--active' : '',
-    isDragging ? 'tab-header__item--dragging' : '',
-    isBeingDraggedOver ? 'tab-header__item--drag-over' : ''
-  ].filter(Boolean).join(' ');
+  const headerClasses = getTabHeaderClasses({ 
+    isActive, 
+    isDragging, 
+    isBeingDraggedOver,
+    width 
+  });
 
   return (
-    <>
-      {/* 드롭 인디케이터 - 탭 앞에 표시 */}
-      {isBeingDraggedOver && dragState?.isDragging && (
-        <div className="tab-header__drop-indicator" />
+    <div style={{ position: 'relative', display: 'flex' }}>
+      {/* 드롭 인디케이터 - 탭 앞에 absolute positioning으로 표시 */}
+      {shouldShowDropIndicator(dragState, panelId, index) && (
+        <div 
+          className="tab-header__drop-indicator"
+          style={{ 
+            left: '-1px' // 탭 왼쪽에 표시
+          }}
+        />
       )}
       
       <button
@@ -150,7 +226,7 @@ function TabHeader({
         onDragOver={dragEvents ? (e) => dragEvents.onDragOver(e, index, panelId) : undefined}
         onDragLeave={dragEvents?.onDragLeave}
         onDrop={dragEvents ? (e) => dragEvents.onDrop(e, index, panelId) : undefined}
-        style={{ touchAction: 'none' }} // 모바일 터치 최적화
+        style={{ touchAction: 'none', width }}
       >
         <span className="tab-header__title">
           {tab.title}
@@ -170,52 +246,55 @@ function TabHeader({
           </button>
         )}
       </button>
-    </>
+    </div>
   );
 }
 
-function FlexDropZone({ index, panelId, dragEvents }: DropZoneProps) {
+function FlexDropZone({ index, panelId, dragEvents, dragState }: DropZoneProps) {
+  const isBeingDraggedOver = isPositionBeingDraggedOver(dragState, panelId, index);
+  const dragActiveState = isDragActive(dragState);
+
+  const styleProps = { isDragActive: dragActiveState, isBeingDraggedOver };
+  
+  const className = getFlexDropZoneClasses(styleProps);
+  const style = getFlexDropZoneStyle(styleProps);
+
   return (
     <div 
-      className="tab-header__flex-drop-zone"
+      className={className}
+      style={style}
       onDragOver={dragEvents ? (e) => dragEvents.onDragOver(e, index, panelId) : undefined}
       onDragLeave={dragEvents?.onDragLeave}
       onDrop={dragEvents ? (e) => dragEvents.onDrop(e, index, panelId) : undefined}
-    />
+    >
+      {/* 맨 마지막 위치의 드롭 인디케이터 */}
+      {shouldShowDropIndicator(dragState, panelId, index) && (
+        <div 
+          className="tab-header__drop-indicator"
+          style={{ 
+            left: '0px' // FlexDropZone 시작 부분에 표시
+          }}
+        />
+      )}
+    </div>
   );
 }
 
-function EmptyPanelDropZone({ panelId, dragState, dragEvents, allowTabSharing }: EmptyPanelDropZoneProps) {
-  const isDragActive = dragState?.isDragging;
-  const isBeingDraggedOver = dragState?.dragOverPanelId === panelId && 
-                             dragState?.dragOverTabIndex === 0;
+function EmptyPanelDropZone({ panelId, dragState, dragEvents, allowTabSharing = true }: EmptyPanelDropZoneProps) {
+  const dragActiveState = isDragActive(dragState);
+  const isBeingDraggedOver = isPositionBeingDraggedOver(dragState, panelId, 0);
   
-  // 복잡한 조건들을 명명된 변수로 분리 (토스 프론트앤드 코드 룰 참고했음)
-  const isInDragOverState = isBeingDraggedOver;
-  const isInDragActiveState = isDragActive && !isBeingDraggedOver;
-  
-  // allowTabSharing 조건에 따라 다른 클래스 조합
-  const dropZoneClasses = [
-    'tab-content__empty',
-    isInDragOverState && 'tab-content__empty--drag-over',
-    isInDragActiveState && 'tab-content__empty--drag-active'
-  ].filter(Boolean).join(' ');
-  
-  // allowTabSharing에 따라 다른 메시지 표시
-  const getDropMessage = () => {
-    if (!isDragActive) return 'This panel is empty';
-    if (!allowTabSharing) return 'You can\'t move tabs between panels';
-    return 'Drop here to add the tab';
-  };
+  const dropZoneClasses = getEmptyPanelDropZoneClasses(dragActiveState, isBeingDraggedOver);
+  const dropMessage = getEmptyPanelDropMessage(dragActiveState, allowTabSharing);
   
   return (
     <div 
       className={dropZoneClasses}
-      onDragOver={isDragActive && dragEvents ? (e) => dragEvents.onDragOver(e, 0, panelId) : undefined}
-      onDragLeave={isDragActive && dragEvents ? dragEvents.onDragLeave : undefined}
-      onDrop={isDragActive && dragEvents ? (e) => dragEvents.onDrop(e, 0, panelId) : undefined}
+      onDragOver={dragActiveState && dragEvents ? (e) => dragEvents.onDragOver(e, 0, panelId) : undefined}
+      onDragLeave={dragActiveState && dragEvents ? dragEvents.onDragLeave : undefined}
+      onDrop={dragActiveState && dragEvents ? (e) => dragEvents.onDrop(e, 0, panelId) : undefined}
     >
-      {getDropMessage()}
+      {dropMessage}
     </div>
   );
 } 
