@@ -183,7 +183,7 @@ function TabHeader({
   );
 }
 
-function FlexDropZone({ index, panelId, dragState, dragEvents }: DropZoneProps) {
+function FlexDropZone({ index, panelId, dragEvents }: DropZoneProps) {
   return (
     <div 
       className="tab-header__flex-drop-zone"
