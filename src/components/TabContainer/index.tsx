@@ -1,10 +1,17 @@
 import React from 'react';
-import type { TabContainerProps, Tab } from '../../types';
+import type { TabContainerProps } from '../../types';
+import { TabHeader } from './TabHeader';
 
 export function TabContainer({
   panel,
+  panelIndex,
   onPanelChange,
-  // orientation, // TODO: 향후 세로 모드에서 탭 레이아웃 구현 시 사용할수도..? YAGNI 위배인가?
+  dragState,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
+  allowCrossPanelDrop,
   className = '',
 }: TabContainerProps) {
   const handleTabSelect = (tabId: string) => {
@@ -45,24 +52,100 @@ export function TabContainer({
 
   const containerClasses = [
     'tab-container',
+    dragState.isDragging && dragState.dropPanelId === panel.id ? 'tab-container--drop-zone' : '',
     className
   ].filter(Boolean).join(' ');
 
+  const isDraggedTab = (tabIndex: number) => {
+    return dragState.isDragging && 
+           dragState.sourcePanelIndex === panelIndex && 
+           dragState.sourceTabIndex === tabIndex;
+  };
+
+  const isDropTarget = (tabIndex: number) => {
+    return dragState.isDragging && 
+           dragState.dropPanelId === panel.id && 
+           dragState.dropPosition === tabIndex;
+  };
+
+  const getDropPosition = (tabIndex: number): 'before' | 'after' | null => {
+    if (!isDropTarget(tabIndex)) return null;
+    
+    const isSamePanel = dragState.sourcePanelIndex === panelIndex;
+    const sourceIndex = dragState.sourceTabIndex;
+    
+    if (isSamePanel && sourceIndex !== null) {
+      return sourceIndex < tabIndex ? 'after' : 'before';
+    }
+    
+    return 'before';
+  };
+
+
+
   return (
     <div className={containerClasses}>
-      {panel.tabs.length > 0 && (
-        <div className="tab-header">
-          {panel.tabs.map((tab) => (
-            <TabHeader
-              key={tab.id}
-              tab={tab}
-              isActive={tab.id === panel.activeTabId}
-              onSelect={() => handleTabSelect(tab.id)}
-              onClose={tab.closable !== false ? () => handleTabClose(tab.id) : undefined}
-            />
-          ))}
-        </div>
-      )}
+      <div className={`tab-header ${panel.tabs.length === 0 ? 'tab-header--empty' : ''}`}
+           onDragOver={(e) => {
+             e.preventDefault();
+             // 탭 헤더 영역 끝에 드롭할 수 있도록 허용
+             if (allowCrossPanelDrop || dragState.sourcePanelIndex === panelIndex) {
+               onDragOver(e, panelIndex, panel.tabs.length);
+             }
+           }}
+           onDrop={(e) => {
+             e.preventDefault();
+             onDrop(e, panelIndex, panel.tabs.length);
+           }}>
+        {panel.tabs.length > 0 ? (
+          panel.tabs.map((tab, tabIndex) => (
+            <React.Fragment key={tab.id}>
+              {/* 탭 앞에 삽입 인디케이터 */}
+              {dragState.isDragging && 
+               dragState.dropPanelId === panel.id && 
+               dragState.insertionIndex === tabIndex && (
+                <div className="tab-insertion-indicator" />
+              )}
+              
+              <TabHeader
+                tab={tab}
+                tabIndex={tabIndex}
+                panelIndex={panelIndex}
+                isActive={tab.id === panel.activeTabId}
+                onSelect={() => handleTabSelect(tab.id)}
+                onClose={tab.closable !== false ? () => handleTabClose(tab.id) : undefined}
+                isDragging={isDraggedTab(tabIndex)}
+                isDropTarget={isDropTarget(tabIndex)}
+                dropPosition={getDropPosition(tabIndex)}
+                onDragStart={onDragStart}
+                onDragOver={onDragOver}
+                onDrop={onDrop}
+                onDragEnd={onDragEnd}
+              />
+              
+              {/* 마지막 탭 뒤에 삽입 인디케이터 */}
+              {dragState.isDragging && 
+               dragState.dropPanelId === panel.id && 
+               dragState.insertionIndex === panel.tabs.length &&
+               tabIndex === panel.tabs.length - 1 && (
+                <div className="tab-insertion-indicator" />
+              )}
+            </React.Fragment>
+          ))
+        ) : (
+          <div className="tab-header__empty">
+            {dragState.isDragging && (allowCrossPanelDrop || dragState.sourcePanelIndex === panelIndex) ? (
+              <span className="tab-header__drop-hint">
+                📁 여기에 탭을 드롭하세요
+              </span>
+            ) : (
+              <span className="tab-header__empty-text">
+                탭이 없습니다
+              </span>
+            )}
+          </div>
+        )}
+      </div>
       
       <div className="tab-content">
         {activeTab ? activeTab.content : (
@@ -79,45 +162,5 @@ export function TabContainer({
         )}
       </div>
     </div>
-  );
-}
-
-interface TabHeaderProps {
-  tab: Tab;
-  isActive: boolean;
-  onSelect: () => void;
-  onClose?: () => void;
-}
-
-function TabHeader({ tab, isActive, onSelect, onClose }: TabHeaderProps) {
-  const headerClasses = [
-    'tab-header__item',
-    isActive ? 'tab-header__item--active' : ''
-  ].filter(Boolean).join(' ');
-
-  return (
-    <button
-      className={headerClasses}
-      onClick={onSelect}
-      title={tab.title}
-    >
-      <span className="tab-header__title">
-        {tab.title}
-      </span>
-      
-      {onClose && (
-        <button
-          className="tab-header__close"
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose();
-          }}
-          title="탭 닫기"
-          aria-label={`${tab.title} 탭 닫기`}
-        >
-          ✕
-        </button>
-      )}
-    </button>
   );
 } 

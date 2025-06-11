@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { DualTabPanelProps } from '../../types';
 import { TabContainer } from '../TabContainer';
 import { PanelSplitter } from '../PanelSplitter';
+import { useDragAndDrop } from '../../hooks/useDragAndDrop';
 
 export function DualTabPanel({
   panels,
@@ -12,8 +13,27 @@ export function DualTabPanel({
   className = '',
   style,
   minPanelSize = 100,
+  allowCrossPanelDrop = false,
+  keepMinimumTab = true,
+  onTabMove,
+  onTabReorder,
 }: DualTabPanelProps) {
   const [splitRatio, setSplitRatio] = useState(defaultSplitRatio);
+
+  const {
+    dragState,
+    handleDragStart,
+    handleDragOver,
+    handleDrop,
+    handleDragEnd,
+  } = useDragAndDrop({
+    panels,
+    onPanelsChange,
+    allowCrossPanelDrop,
+    keepMinimumTab,
+    onTabMove,
+    onTabReorder,
+  });
 
   const handleSplitRatioChange = (newRatio: number) => {
     setSplitRatio(newRatio);
@@ -47,8 +67,15 @@ export function DualTabPanel({
       <div className="dualtab-panel__panel" style={panel1Style}>
         <TabContainer
           panel={panels[0]}
+          panelIndex={0}
           onPanelChange={handlePanelChange(0)}
           orientation={orientation}
+          dragState={dragState}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onDragEnd={handleDragEnd}
+          allowCrossPanelDrop={allowCrossPanelDrop}
         />
       </div>
       
@@ -61,8 +88,15 @@ export function DualTabPanel({
       <div className="dualtab-panel__panel" style={panel2Style}>
         <TabContainer
           panel={panels[1]}
+          panelIndex={1}
           onPanelChange={handlePanelChange(1)}
           orientation={orientation}
+          dragState={dragState}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onDragEnd={handleDragEnd}
+          allowCrossPanelDrop={allowCrossPanelDrop}
         />
       </div>
     </div>

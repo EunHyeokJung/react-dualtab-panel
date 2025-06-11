@@ -79,6 +79,7 @@ export function DemoApp() {
   ]);
 
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
+  const [keepMinimumTab, setKeepMinimumTab] = useState(true);
 
   // Tab addition logic on menu click
   const handleMenuClick = (menuItem: MenuItem) => {
@@ -155,8 +156,31 @@ export function DemoApp() {
             </select>
           </div>
           
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <label style={{ fontSize: '14px', fontWeight: '500' }}>
+              <input 
+                type="checkbox"
+                checked={keepMinimumTab}
+                onChange={(e) => setKeepMinimumTab(e.target.checked)}
+                style={{ marginRight: '6px' }}
+              />
+              Keep Minimum Tab
+            </label>
+          </div>
+          
           <div style={{ fontSize: '12px', color: '#6b7280' }}>
             Active tabs: {panels[0].tabs.length + panels[1].tabs.length}
+          </div>
+          
+          <div style={{ 
+            fontSize: '12px', 
+            color: '#10b981', 
+            backgroundColor: '#dcfce7', 
+            padding: '4px 8px', 
+            borderRadius: '4px',
+            fontWeight: '500'
+          }}>
+            🎯 Drag & Drop Enabled!
           </div>
         </div>
       </div>
@@ -173,6 +197,14 @@ export function DemoApp() {
               onPanelsChange={setPanels}
               orientation={orientation}
               defaultSplitRatio={0.6}
+              allowCrossPanelDrop={true}
+              keepMinimumTab={keepMinimumTab}
+              onTabMove={(tab, fromPanel, toPanel, position) => {
+                console.log(`Tab "${tab.title}" moved from panel ${fromPanel} to panel ${toPanel} at position ${position}`);
+              }}
+              onTabReorder={(panelIndex, fromIndex, toIndex) => {
+                console.log(`Tab reordered in panel ${panelIndex} from position ${fromIndex} to ${toIndex}`);
+              }}
             />
           </div>
         </div>
