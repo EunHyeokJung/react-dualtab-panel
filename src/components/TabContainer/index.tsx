@@ -202,9 +202,9 @@ function EmptyPanelDropZone({ panelId, dragState, dragEvents, allowTabSharing }:
   
   // allowTabSharing에 따라 다른 메시지 표시
   const getDropMessage = () => {
-    if (!isDragActive) return 'Empty panel';
+    if (!isDragActive) return 'This panel is empty';
     if (!allowTabSharing) return 'You can\'t move tabs between panels';
-    return 'Drop tab here';
+    return 'Drop here to add the tab';
   };
   
   return (
