@@ -4,9 +4,14 @@ import type { Panel, DragState, TabMoveOperation, DragEvents } from '../types';
 interface UseTabDragDropProps {
   panels: [Panel, Panel];
   onPanelsChange: (panels: [Panel, Panel]) => void;
+  allowTabSharing?: boolean;
 }
 
-export function useTabDragDrop({ panels, onPanelsChange }: UseTabDragDropProps) {
+export function useTabDragDrop({ 
+  panels, 
+  onPanelsChange, 
+  allowTabSharing = true 
+}: UseTabDragDropProps) {
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
     draggedTabId: null,
@@ -108,12 +113,18 @@ export function useTabDragDrop({ panels, onPanelsChange }: UseTabDragDropProps) 
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
       
+      // 크로스 패널 이동이 비활성화된 경우, 다른 패널로의 드래그오버 무시
+      if (!allowTabSharing && dragState.draggedFromPanelId && dragState.draggedFromPanelId !== panelId) {
+        e.dataTransfer.dropEffect = 'none';
+        return;
+      }
+      
       setDragState(prev => ({
         ...prev,
         dragOverTabIndex: targetIndex,
         dragOverPanelId: panelId,
       }));
-    }, []),
+    }, [allowTabSharing, dragState.draggedFromPanelId]),
 
     onDragLeave: useCallback((e: React.DragEvent) => {
       // 자식 요소로 이동하는 경우는 무시
@@ -132,6 +143,12 @@ export function useTabDragDrop({ panels, onPanelsChange }: UseTabDragDropProps) 
       const { draggedTabId, draggedFromPanelId } = dragState;
       
       if (!draggedTabId || !draggedFromPanelId) {
+        resetDragState();
+        return;
+      }
+      
+      // 크로스 패널 이동이 비활성화된 경우, 다른 패널로의 드롭 차단
+      if (!allowTabSharing && draggedFromPanelId !== panelId) {
         resetDragState();
         return;
       }
@@ -166,7 +183,7 @@ export function useTabDragDrop({ panels, onPanelsChange }: UseTabDragDropProps) 
       
       // 드래그 상태 초기화
       resetDragState();
-    }, [dragState, panels, moveTab, resetDragState]),
+    }, [dragState, panels, moveTab, resetDragState, allowTabSharing]),
   };
 
   return {

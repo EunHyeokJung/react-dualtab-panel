@@ -13,9 +13,14 @@ export function DualTabPanel({
   className = '',
   style,
   minPanelSize = 100,
+  allowTabSharing = true,
 }: DualTabPanelProps) {
   const [splitRatio, setSplitRatio] = useState(defaultSplitRatio);
-  const { dragState, dragEvents } = useTabDragDrop({ panels, onPanelsChange });
+  const { dragState, dragEvents } = useTabDragDrop({ 
+    panels, 
+    onPanelsChange, 
+    allowTabSharing 
+  });
 
   const handleSplitRatioChange = (newRatio: number) => {
     setSplitRatio(newRatio);

@@ -84,6 +84,7 @@ export function DemoApp() {
   ]);
 
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
+  const [allowTabSharing, setAllowTabSharing] = useState(true);
 
   // Tab addition logic on menu click
   const handleMenuClick = (menuItem: MenuItem) => {
@@ -160,6 +161,18 @@ export function DemoApp() {
             </select>
           </div>
           
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <label style={{ fontSize: '14px', fontWeight: '500' }}>
+              <input 
+                type="checkbox" 
+                checked={allowTabSharing}
+                onChange={(e) => setAllowTabSharing(e.target.checked)}
+                style={{ marginRight: '4px' }}
+              />
+              Allow tab sharing
+            </label>
+          </div>
+          
           <div style={{ fontSize: '12px', color: '#6b7280' }}>
             Active tabs: {panels[0].tabs.length + panels[1].tabs.length}
           </div>
@@ -178,6 +191,7 @@ export function DemoApp() {
               onPanelsChange={setPanels}
               orientation={orientation}
               defaultSplitRatio={0.6}
+              allowTabSharing={allowTabSharing}
             />
           </div>
         </div>

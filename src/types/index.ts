@@ -24,6 +24,7 @@ export interface DualTabPanelProps {
   className?: string;
   style?: React.CSSProperties;
   minPanelSize?: number;
+  allowTabSharing?: boolean;
 }
 
 export interface TabContainerProps {
