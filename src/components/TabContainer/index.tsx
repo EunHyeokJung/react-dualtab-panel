@@ -2,9 +2,9 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import type { TabContainerProps, TabHeaderProps } from '../../types';
 import type { DropZoneProps, EmptyPanelDropZoneProps } from '../../types/components';
 import { CloseIcon } from '@common/icons/CloseIcon';
+import { useSmoothScroll } from '../../hooks/useSmoothScroll';
 
-// 유틸리티 및 상수 임포트
-import { TAB_SCROLL } from '../../constants';
+// 유틸리티 임포트
 import { 
   calculateTabLayout,
   isTabBeingDragged, 
@@ -31,6 +31,9 @@ export function TabContainer({
   const [tabWidths, setTabWidths] = useState<Record<string, number>>({});
   const [needsScroll, setNeedsScroll] = useState(false);
 
+  // 부드러운 스크롤 훅 사용
+  const { handleWheelScroll: handleSmoothWheelScroll, cleanup } = useSmoothScroll();
+
   // 탭 레이아웃 재계산 함수
   const recalculateTabLayout = useCallback(() => {
     if (!tabHeaderRef.current || panel.tabs.length === 0) return;
@@ -52,8 +55,6 @@ export function TabContainer({
   useEffect(() => {
     recalculateTabLayout();
   }, [recalculateTabLayout]);
-
-
 
   // 패널 크기 변경 감지를 위한 ResizeObserver (debounced)
   useEffect(() => {
@@ -77,22 +78,15 @@ export function TabContainer({
     return () => {
       resizeObserver.disconnect();
       clearTimeout(timeoutId);
+      // 스크롤 애니메이션 정리
+      cleanup();
     };
-  }, [recalculateTabLayout]);
+  }, [recalculateTabLayout, cleanup]);
 
-  // 마우스 휠 스크롤 지원
-  const handleWheelScroll = (e: React.WheelEvent) => {
-    if (!tabHeaderRef.current || !needsScroll) return;
-    
-    e.preventDefault();
-    const scrollContainer = tabHeaderRef.current;
-    const scrollAmount = e.deltaY > 0 ? TAB_SCROLL.AMOUNT : -TAB_SCROLL.AMOUNT;
-    
-    scrollContainer.scrollTo({
-      left: scrollContainer.scrollLeft + scrollAmount,
-      behavior: 'smooth'
-    });
-  };
+  // 마우스 휠 스크롤 이벤트 핸들러
+  const handleWheelScroll = useCallback((e: React.WheelEvent) => {
+    handleSmoothWheelScroll(e, tabHeaderRef, needsScroll);
+  }, [handleSmoothWheelScroll, needsScroll]);
 
   const handleTabSelect = (tabId: string) => {
     onPanelChange({
