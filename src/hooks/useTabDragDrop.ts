@@ -28,11 +28,20 @@ export function useTabDragDrop({ panels, onPanelsChange }: UseTabDragDropProps) 
   const moveTab = useCallback((operation: TabMoveOperation) => {
     const { tabId, fromPanelId, toPanelId, fromIndex, toIndex } = operation;
     
+    // 입력 유효성 검사
+    if (!tabId || !fromPanelId || !toPanelId || fromIndex < 0 || toIndex < 0) {
+      console.warn('useTabDragDrop: Invalid operation parameters', operation);
+      return;
+    }
+    
     // 원본 패널에서 탭 찾기
     const fromPanelIndex = panels.findIndex(panel => panel.id === fromPanelId);
     const toPanelIndex = panels.findIndex(panel => panel.id === toPanelId);
     
-    if (fromPanelIndex === -1 || toPanelIndex === -1) return;
+    if (fromPanelIndex === -1 || toPanelIndex === -1) {
+      console.warn('useTabDragDrop: Panel not found', { fromPanelId, toPanelId });
+      return;
+    }
     
     const fromPanel = panels[fromPanelIndex];
     const toPanel = panels[toPanelIndex];

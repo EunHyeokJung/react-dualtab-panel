@@ -210,6 +210,7 @@ function TabHeaderWithDragDrop({
         onDragOver={dragEvents ? (e) => dragEvents.onDragOver(e, index, panelId) : undefined}
         onDragLeave={dragEvents?.onDragLeave}
         onDrop={dragEvents ? (e) => dragEvents.onDrop(e, index, panelId) : undefined}
+        style={{ touchAction: 'none' }} // 모바일 터치 최적화
       >
         <span className="tab-header__title">
           {tab.title}
