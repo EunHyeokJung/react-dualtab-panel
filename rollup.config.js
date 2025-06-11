@@ -1,9 +1,11 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
+import alias from '@rollup/plugin-alias';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
 import dts from 'rollup-plugin-dts';
+import path from 'path';
 
 import { readFileSync } from 'fs';
 
@@ -25,6 +27,13 @@ export default {
   ],
   plugins: [
     peerDepsExternal(),
+    alias({
+      entries: [
+        { find: '@', replacement: path.resolve('src') },
+        { find: '@assets', replacement: path.resolve('src/assets') },
+        { find: '@common', replacement: path.resolve('src/components/common') },
+      ]
+    }),
     resolve({
       browser: true,
     }),
