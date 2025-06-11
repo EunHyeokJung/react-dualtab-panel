@@ -27,10 +27,13 @@ https://github.com/user-attachments/assets/f30fe585-bf6a-4d87-86e8-c7fd1474dc1e
 사이드 프로젝트에 있던 코드를 옮기고 있어서, 아직 기본적인 기능만 구현되어 있어요.
 
 - **듀얼 독립 패널**: 각 패널은 독립적인 탭을 가져요
-- **탭 드래그앤드롭**: 탭 순서 변경 및 패널 간 이동 지원 (기본 구현)
+- **탭 드래그앤드롭**: 탭 순서 변경 및 패널 간 이동 지원
+  - **빈 패널 드롭 지원**: 모든 탭이 제거된 빈 패널에도 탭을 드롭할 수 있어요
+  - **시각적 피드백**: 드래그 중 드롭 가능한 영역과 호버 상태를 명확하게 표시해요
 - **레이아웃 지원**: 수평/수직 분할 레이아웃 변경이 가능해요
 - **크기 조절**: 패널 간 드래그로 크기 조절이 가능해요
 - **반응형**: 반응형 디자인으로 설계되어 있어요
+- **커스터마이징**: CSS 클래스 기반으로 완전한 스타일 커스터마이징 지원
 
 ## 📋 향후 계획
 
@@ -38,7 +41,6 @@ https://github.com/user-attachments/assets/f30fe585-bf6a-4d87-86e8-c7fd1474dc1e
 - 테스트 코드 작성
 - 몇가지 기능 개발과 모드 추가
   - ✅ 드래그 앤 드랍으로 탭 순서 이동 (기본 구현 완료)
-  - 🚧 드래그앤드롭 고도화 (접근성, 모바일 최적화, 테스트)
   - 하이라키 모드(좌측이 부모 페이지, 우측이 자식 페이지) 개발 예정
 - js 버전 제작
 - 최종 목표: npm에 배포!!
@@ -124,11 +126,45 @@ function App() {
 기본 CSS 클래스들을 오버라이드하여 커스터마이징 가능합니다.
 
 ```css
+/* 메인 레이아웃 */
 .dualtab-panel { /* 메인 컨테이너 */ }
 .tab-container { /* 개별 패널 */ }
+.panel-splitter { /* 크기 조절 구분선 */ }
+
+/* 탭 헤더 */
 .tab-header { /* 탭 헤더 영역 */ }
 .tab-header__item { /* 개별 탭 */ }
-.panel-splitter { /* 크기 조절 구분선 */ }
+.tab-header__item--active { /* 활성 탭 */ }
+.tab-header__item--dragging { /* 드래그 중인 탭 */ }
+.tab-header__item--drag-over { /* 드래그 호버 중인 탭 */ }
+.tab-header__close { /* 탭 닫기 버튼 */ }
+.tab-header__drop-indicator { /* 드롭 위치 인디케이터 */ }
+
+/* 탭 컨텐츠 */
+.tab-content { /* 탭 내용 영역 */ }
+.tab-content__empty { /* 빈 패널 기본 상태 */ }
+.tab-content__empty--drag-active { /* 드래그 중일 때 빈 패널 */ }
+.tab-content__empty--drag-over { /* 드래그 호버 중인 빈 패널 */ }
+```
+
+### 빈 패널 스타일 커스터마이징 예시
+
+```css
+/* 빈 패널 커스터마이징 */
+.tab-content__empty {
+  color: #999;
+  font-size: 14px;
+}
+
+.tab-content__empty--drag-active {
+  background-color: #f5f5f5;
+  border: 2px dashed #d9d9d9;
+}
+
+.tab-content__empty--drag-over {
+  background-color: #e6f7ff;
+  border: 2px solid #1890ff;
+}
 ```
 
 ## 🤝 기여하기
