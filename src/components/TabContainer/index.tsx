@@ -52,10 +52,10 @@ export function TabContainer({
 
   return (
     <div className={containerClasses}>
-      {panel.tabs.length > 0 ? (
+      {panel.tabs.length > 0 && (
         <div className="tab-header">
           {panel.tabs.map((tab, index) => (
-            <TabHeaderWithDragDrop
+            <TabHeader
               key={tab.id}
               tab={tab}
               index={index}
@@ -82,36 +82,15 @@ export function TabContainer({
             />
           )}
         </div>
-      ) : (
-        /* 빈 패널에도 드롭존 추가 */
-        dragState?.isDragging && (
-          <div className="tab-header tab-header--empty">
-            {dragState.dragOverPanelId === panel.id && 
-             dragState.dragOverTabIndex === 0 && (
-              <div className="tab-header__drop-indicator" />
-            )}
-            <FlexDropZone
-              index={0}
-              panelId={panel.id}
-              dragState={dragState}
-              dragEvents={dragEvents}
-            />
-          </div>
-        )
       )}
       
       <div className="tab-content">
         {activeTab ? activeTab.content : (
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            height: '100%',
-            color: '#9ca3af',
-            fontSize: '14px'
-          }}>
-            {dragState?.isDragging ? '여기에 탭을 드롭하세요' : '탭이 없습니다'}
-          </div>
+          <EmptyPanelDropZone
+            panelId={panel.id}
+            dragState={dragState}
+            dragEvents={dragEvents}
+          />
         )}
       </div>
     </div>
@@ -123,9 +102,6 @@ interface TabHeaderProps {
   isActive: boolean;
   onSelect: () => void;
   onClose?: () => void;
-}
-
-interface TabHeaderWithDragDropProps extends TabHeaderProps {
   index: number;
   panelId: string;
   dragState?: DragState;
@@ -139,40 +115,13 @@ interface DropZoneProps {
   dragEvents?: DragEvents;
 }
 
-function TabHeader({ tab, isActive, onSelect, onClose }: TabHeaderProps) {
-  const headerClasses = [
-    'tab-header__item',
-    isActive ? 'tab-header__item--active' : ''
-  ].filter(Boolean).join(' ');
-
-  return (
-    <button
-      className={headerClasses}
-      onClick={onSelect}
-      title={tab.title}
-    >
-      <span className="tab-header__title">
-        {tab.title}
-      </span>
-      
-      {onClose && (
-        <button
-          className="tab-header__close"
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose();
-          }}
-          title="탭 닫기"
-          aria-label={`${tab.title} 탭 닫기`}
-        >
-          ✕
-        </button>
-      )}
-    </button>
-  );
+interface EmptyPanelDropZoneProps {
+  panelId: string;
+  dragState?: DragState;
+  dragEvents?: DragEvents;
 }
 
-function TabHeaderWithDragDrop({ 
+function TabHeader({ 
   tab, 
   index, 
   panelId, 
@@ -181,7 +130,7 @@ function TabHeaderWithDragDrop({
   onClose, 
   dragState,
   dragEvents 
-}: TabHeaderWithDragDropProps) {
+}: TabHeaderProps) {
   const isDragging = dragState?.draggedTabId === tab.id;
   const isBeingDraggedOver = dragState?.dragOverPanelId === panelId && 
                              dragState?.dragOverTabIndex === index;
@@ -210,7 +159,7 @@ function TabHeaderWithDragDrop({
         onDragOver={dragEvents ? (e) => dragEvents.onDragOver(e, index, panelId) : undefined}
         onDragLeave={dragEvents?.onDragLeave}
         onDrop={dragEvents ? (e) => dragEvents.onDrop(e, index, panelId) : undefined}
-        style={{ touchAction: 'none' }} // 모바일 터치 최적화
+        style={{ touchAction: 'none' }} // 모바일 터치 최적화 (모바일 지원 여부는 검토 필요할 것 같긴 함)
       >
         <span className="tab-header__title">
           {tab.title}
@@ -223,32 +172,13 @@ function TabHeaderWithDragDrop({
               e.stopPropagation();
               onClose();
             }}
-            title="탭 닫기"
-            aria-label={`${tab.title} 탭 닫기`}
+            title="Close tab"
+            aria-label={`Close ${tab.title} tab`}
           >
             ✕
           </button>
         )}
       </button>
-    </>
-  );
-}
-
-function DropZone({ index, panelId, dragState, dragEvents }: DropZoneProps) {
-  const isTargeted = dragState?.dragOverPanelId === panelId && 
-                     dragState?.dragOverTabIndex === index;
-
-  return (
-    <>
-      {isTargeted && (
-        <div className="tab-header__drop-indicator" />
-      )}
-      <div
-        className="tab-header__drop-zone"
-        onDragOver={dragEvents ? (e) => dragEvents.onDragOver(e, index, panelId) : undefined}
-        onDragLeave={dragEvents?.onDragLeave}
-        onDrop={dragEvents ? (e) => dragEvents.onDrop(e, index, panelId) : undefined}
-      />
     </>
   );
 }
@@ -261,5 +191,29 @@ function FlexDropZone({ index, panelId, dragState, dragEvents }: DropZoneProps) 
       onDragLeave={dragEvents?.onDragLeave}
       onDrop={dragEvents ? (e) => dragEvents.onDrop(e, index, panelId) : undefined}
     />
+  );
+}
+
+function EmptyPanelDropZone({ panelId, dragState, dragEvents }: EmptyPanelDropZoneProps) {
+  const isDragActive = dragState?.isDragging;
+  const isBeingDraggedOver = dragState?.dragOverPanelId === panelId && 
+                             dragState?.dragOverTabIndex === 0;
+  
+  // CSS 클래스 기반으로 스타일 결정
+  const dropZoneClasses = [
+    'tab-content__empty',
+    isBeingDraggedOver ? 'tab-content__empty--drag-over' : '',
+    isDragActive && !isBeingDraggedOver ? 'tab-content__empty--drag-active' : ''
+  ].filter(Boolean).join(' ');
+  
+  return (
+    <div 
+      className={dropZoneClasses}
+      onDragOver={isDragActive && dragEvents ? (e) => dragEvents.onDragOver(e, 0, panelId) : undefined}
+      onDragLeave={isDragActive && dragEvents ? dragEvents.onDragLeave : undefined}
+      onDrop={isDragActive && dragEvents ? (e) => dragEvents.onDrop(e, 0, panelId) : undefined}
+    >
+      {isDragActive ? 'Drop tab here' : 'Empty panel'}
+    </div>
   );
 } 

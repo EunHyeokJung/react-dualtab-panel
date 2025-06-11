@@ -167,14 +167,33 @@
   align-items: center;
 }
 
-
-
-
-
 .tab-content {
   flex: 1;
   overflow: auto;
   padding: 16px;
+}
+
+/* Empty panel drop zone styles */
+.tab-content__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #9ca3af;
+  font-size: 14px;
+  background-color: transparent;
+  border: none;
+  transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+.tab-content__empty--drag-active {
+  background-color: #f3f4f6;
+  border: 2px dashed #d1d5db;
+}
+
+.tab-content__empty--drag-over {
+  background-color: #dbeafe;
+  border: 2px dashed #3b82f6;
 }
 
 /* PanelSplitter styles */
