@@ -65,10 +65,15 @@ export function DemoApp() {
               <h3>2. Manage Tabs</h3>
               <p>Close tabs using the X button on each tab.</p>
               
-              <h3>3. Resize Panels</h3>
+              <h3>3. Drag & Drop Tabs</h3>
+              <p>• Drag tabs to reorder</p>
+              <p>• Drag tabs between panels to move</p>
+              <p>• Drop tabs into empty panels to populate</p>
+              
+              <h3>4. Resize Panels</h3>
               <p>Drag the center divider to adjust panel sizes.</p>
               
-              <h3>4. Change Layout</h3>
+              <h3>5. Change Layout</h3>
               <p>Switch between horizontal/vertical layout using the header controls.</p>
             </div>
           </div>
