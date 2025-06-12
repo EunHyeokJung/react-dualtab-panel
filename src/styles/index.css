@@ -60,7 +60,8 @@
   min-height: 40px;
   overflow-x: auto; /* 가로 스크롤 활성화 */
   overflow-y: hidden;
-  scrollbar-width: none; /* Firefox - 스크롤바 숨김 */
+  scrollbar-width: thin; /* Firefox - 얇은 스크롤바 */
+  scrollbar-color: #d1d5db transparent; /* Firefox - 스크롤바 색상 */
   position: relative;
   padding-left: 2px; /* 첫 번째 탭의 드롭 인디케이터를 위한 여백 */
 }
@@ -70,9 +71,24 @@
   overflow-x: auto;
 }
 
-/* 웹킷 기반 브라우저 스크롤바 숨김 */
+/* 웹킷 기반 브라우저 얇은 스크롤바 */
 .tab-header::-webkit-scrollbar {
-  display: none;
+  height: 3px; /* 매우 얇은 스크롤바 */
+}
+
+.tab-header::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 1px;
+}
+
+.tab-header::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 1px;
+  transition: background-color 0.2s ease;
+}
+
+.tab-header::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
 }
 
 .tab-header--empty {
