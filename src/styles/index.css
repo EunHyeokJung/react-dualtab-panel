@@ -60,15 +60,11 @@
   min-height: 40px;
   overflow-x: auto; /* 가로 스크롤 활성화 */
   overflow-y: hidden;
-  
-  /* 크로스 플랫폼 스크롤바 표준화 */
-  scrollbar-gutter: stable; /* 스크롤바 공간 미리 확보 */
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #d1d5db transparent; /* Firefox */
-  
+  /* 모든 브라우저에서 스크롤바 숨김 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
   position: relative;
   padding-left: 2px; /* 첫 번째 탭의 드롭 인디케이터를 위한 여백 */
-  padding-bottom: 2px; /* 스크롤바와 활성 탭 표시선 간격 확보 */
 }
 
 /* 스크롤 가능한 상태에서의 추가 스타일링 */
@@ -76,66 +72,9 @@
   overflow-x: auto;
 }
 
-/* 맥OS 환경에서 스크롤바 겹침 방지 */
-.tab-header--mac-scrollbar {
-  padding-bottom: 4px; /* 스크롤바를 위한 추가 여백 */
-}
-
-.tab-header--mac-scrollbar .tab-header__item--active::after {
-  bottom: 4px; /* 맥에서 활성 탭 표시선 위치 조정 */
-}
-
-/* Firefox 환경 최적화 */
-.tab-header--firefox {
-  scrollbar-width: thin;
-  scrollbar-color: #d1d5db #f8f9fa;
-}
-
-/* 모든 환경에서 안정적인 스크롤바 공간 확보 */
-@supports (scrollbar-gutter: stable) {
-  .tab-header {
-    scrollbar-gutter: stable both-edges; /* 양쪽 끝에 스크롤바 공간 확보 */
-  }
-}
-
-/* 웹킷 기반 브라우저 스크롤바 스타일링 */
+/* 웹킷 기반 브라우저 스크롤바 숨김 (Chrome, Safari) */
 .tab-header::-webkit-scrollbar {
-  height: 8px; /* 스크롤바 높이 약간 증가 */
-  width: 8px; /* 세로 스크롤바 (숨김용) */
-}
-
-.tab-header::-webkit-scrollbar-track {
-  background: #f8f9fa; /* 트랙 배경색 추가 */
-  border-radius: 4px;
-  /* 포커스 시 접근성 개선 */
-  outline: none;
-}
-
-.tab-header::-webkit-scrollbar-thumb {
-  background-color: #d1d5db;
-  border-radius: 4px;
-  border: 1px solid #f8f9fa; /* 테두리로 여백 효과 */
-  min-width: 20px; /* 최소 thumb 크기 */
-  /* 부드러운 트랜지션 효과 */
-  transition: background-color 0.2s ease;
-}
-
-.tab-header::-webkit-scrollbar-thumb:hover {
-  background-color: #9ca3af;
-}
-
-.tab-header::-webkit-scrollbar-thumb:active {
-  background-color: #6b7280; /* 클릭 시 더 진한 색상 */
-}
-
-.tab-header::-webkit-scrollbar-corner {
-  background: #f8f9fa; /* 모서리 영역 스타일 */
-}
-
-/* 접근성: 키보드 포커스 시 스크롤바 영역 강조 */
-.tab-header:focus-within::-webkit-scrollbar-thumb {
-  background-color: #3b82f6;
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+  display: none;
 }
 
 .tab-header--empty {
@@ -184,12 +123,11 @@
 .tab-header__item--active::after {
   content: '';
   position: absolute;
-  bottom: 2px; /* 스크롤바와 겹치지 않도록 약간 위로 이동 */
+  bottom: 0;
   left: 0;
   right: 0;
   height: 2px;
   background-color: #3b82f6;
-  z-index: 10; /* 스크롤바보다 위에 표시 */
 }
 
 .tab-header__title {
