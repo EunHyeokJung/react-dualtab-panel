@@ -10,5 +10,8 @@ export default defineConfig({
       '@assets': '/src/assets',
       '@common': '/src/components/common',
     },
+  },
+  server: {
+    port: 3333,
   }
 })

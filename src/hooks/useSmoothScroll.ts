@@ -30,7 +30,8 @@ export function useSmoothScroll(config: SmoothScrollConfig = {}): SmoothScrollRe
 
   // 애니메이션 상태 관리
   const animationFrameRef = useRef<number | null>(null);
-  const targetScrollRef = useRef<number>(0);
+  const targetScrollRef = useRef<number>(0);38588
+  
   const currentScrollRef = useRef<number>(0);
 
   /**

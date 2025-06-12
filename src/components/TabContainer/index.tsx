@@ -15,7 +15,8 @@ import {
   getFlexDropZoneClasses, 
   getFlexDropZoneStyle,
   getEmptyPanelDropZoneClasses,
-  getEmptyPanelDropMessage
+  getEmptyPanelDropMessage,
+  getScrollbarClasses
 } from '../../utils';
 
 export function TabContainer({
@@ -135,7 +136,7 @@ export function TabContainer({
       {panel.tabs.length > 0 && (
         <div 
           ref={tabHeaderRef}
-          className={`tab-header ${needsScroll ? 'tab-header--scrollable' : ''}`}
+          className={`${getScrollbarClasses().join(' ')} ${needsScroll ? 'tab-header--scrollable' : ''}`}
         >
           {panel.tabs.map((tab, index) => (
             <TabHeader

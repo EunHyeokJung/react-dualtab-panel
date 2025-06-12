@@ -80,3 +80,21 @@ export interface DragEvents {
   onDragLeave: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, targetIndex: number, panelId: string) => void;
 }
+
+/**
+ * 스크롤바 동작 감지 결과
+ */
+export interface ScrollbarBehavior {
+  /** macOS 환경 여부 */
+  isMac: boolean;
+  /** WebKit 기반 브라우저 여부 */
+  isWebKit: boolean;
+  /** Firefox 브라우저 여부 */
+  isFirefox: boolean;
+  /** 스크롤바 가터(gutter) 필요 여부 */
+  needsScrollbarGutter: boolean;
+  /** scrollbar-width 속성 지원 여부 */
+  supportsScrollbarWidth: boolean;
+  /** WebKit 스크롤바 스타일링 지원 여부 */
+  supportsWebkitScrollbar: boolean;
+}
