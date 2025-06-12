@@ -1,11 +1,12 @@
-# DualTabPanel (MVP)
+# React-DualTab-Panel
 
 [![CI](https://github.com/EunHyeokJung/react-dualtab-panel/workflows/CI/badge.svg)](https://github.com/EunHyeokJung/react-dualtab-panel/actions)
+[![Version](https://img.shields.io/badge/version-0.1.0--beta.1-blue.svg)](https://github.com/EunHyeokJung/react-dualtab-panel)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
 
-https://github.com/user-attachments/assets/f30fe585-bf6a-4d87-86e8-c7fd1474dc1e
+https://github.com/user-attachments/assets/c3fb0be3-011c-4d5f-b70c-9c95116c2659
 
 > 🚧 **개발 중** - 이 프로젝트는 아직 개발 중이에요! 뚝딱뚝딱
 
@@ -307,17 +308,17 @@ const panels: [Panel, Panel] = [/* ... */];
 
 ## 🤝 기여하기
 
-이 프로젝트는 현재 개발 중으로, **1.0 정식 버전 배포 후 Contribution을 받을 예정**입니다!
+이 프로젝트는 현재 개발 중으로, **v0.1.0 배포 후 Contribution을 받을 예정**입니다!
 
-관심 있으신 분들은 이슈나 디스커션에 의견을 남겨주세요. 피드백은 언제나 환영합니다! 🎉
+관심 있으신 분들은 이슈나 디스커션에 의견을 남겨주세요. 피드백은 언제나 환영이에요! 🎉
 
 ## 📝 라이센스
 
-**MIT License**
+[MIT LICENSE](LICENSE)
 
-자유롭게 사용하시되, 책임은 본인에게 있습니다!
+**MIT 라이선스에 맞게 자유롭게 사용하시되, 사용에 따른 책임은 사용자 본인에게 있어요.**
 
 ---
 
 > 💡 **팁**: 이 라이브러리는 Toss Frontend Fundamentals 원칙을 따라 개발되었어요. 
-> 가독성, 유지보수성, 그리고 예측 가능성을 중요하게 생각합니다!
+> 가독성, 유지보수성, 예측 가능성을 중요하게 생각하며, 라이브러리로서 사용하기 쉬운지(복잡성)도 고려하며 개발하고 있어요.
