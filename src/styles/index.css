@@ -60,8 +60,7 @@
   min-height: 40px;
   overflow-x: auto; /* 가로 스크롤 활성화 */
   overflow-y: hidden;
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #d1d5db transparent; /* Firefox */
+  scrollbar-width: none; /* Firefox - 스크롤바 숨김 */
   position: relative;
   padding-left: 2px; /* 첫 번째 탭의 드롭 인디케이터를 위한 여백 */
 }
@@ -71,22 +70,9 @@
   overflow-x: auto;
 }
 
-/* 웹킷 기반 브라우저 스크롤바 스타일링 */
+/* 웹킷 기반 브라우저 스크롤바 숨김 */
 .tab-header::-webkit-scrollbar {
-  height: 6px;
-}
-
-.tab-header::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.tab-header::-webkit-scrollbar-thumb {
-  background-color: #d1d5db;
-  border-radius: 3px;
-}
-
-.tab-header::-webkit-scrollbar-thumb:hover {
-  background-color: #9ca3af;
+  display: none;
 }
 
 .tab-header--empty {
