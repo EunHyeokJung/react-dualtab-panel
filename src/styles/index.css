@@ -62,8 +62,10 @@
   overflow-y: hidden;
   scrollbar-width: thin; /* Firefox - 얇은 스크롤바 */
   scrollbar-color: #d1d5db transparent; /* Firefox - 스크롤바 색상 */
+  scrollbar-gutter: stable; /* 스크롤바 공간 예약 - 크로스 플랫폼 일관성 */
   position: relative;
   padding-left: 2px; /* 첫 번째 탭의 드롭 인디케이터를 위한 여백 */
+  padding-bottom: 3px; /* 맥OS 오버레이 스크롤바 공간 확보 */
 }
 
 /* 스크롤 가능한 상태에서의 추가 스타일링 */
