@@ -63,7 +63,7 @@
   scrollbar-width: thin; /* Firefox */
   scrollbar-color: #d1d5db transparent; /* Firefox */
   position: relative;
-  padding-left: 2px; /* 첫 번째 탭의 드롭 인디케이터를 위한 여백 */
+  padding-left: 3px; /* 첫 번째 탭의 드롭 인디케이터를 위한 여백 */
 }
 
 /* 스크롤 가능한 상태에서의 추가 스타일링 */
@@ -73,16 +73,18 @@
 
 /* 웹킷 기반 브라우저 스크롤바 스타일링 */
 .tab-header::-webkit-scrollbar {
-  height: 6px;
+  height: 3px;
 }
 
 .tab-header::-webkit-scrollbar-track {
   background: transparent;
+  border-radius: 1px;
 }
 
 .tab-header::-webkit-scrollbar-thumb {
   background-color: #d1d5db;
-  border-radius: 3px;
+  border-radius: 1px;
+  transition: background-color 0.2s ease;
 }
 
 .tab-header::-webkit-scrollbar-thumb:hover {
