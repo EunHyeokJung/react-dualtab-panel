@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { DualTabPanelProps } from '../../types';
 import { TabContainer } from '../TabContainer';
 import { PanelSplitter } from '../PanelSplitter';
+import { useTabDragDrop } from '../../hooks/useTabDragDrop';
 
 export function DualTabPanel({
   panels,
@@ -12,13 +13,21 @@ export function DualTabPanel({
   className = '',
   style,
   minPanelSize = 100,
+  allowTabSharing = true,
 }: DualTabPanelProps) {
   const [splitRatio, setSplitRatio] = useState(defaultSplitRatio);
+  const { dragState, dragEvents } = useTabDragDrop({ 
+    panels, 
+    onPanelsChange, 
+    allowTabSharing 
+  });
 
   const handleSplitRatioChange = (newRatio: number) => {
     setSplitRatio(newRatio);
     onSplitRatioChange?.(newRatio);
   };
+
+
 
   const handlePanelChange = (panelIndex: 0 | 1) => (updatedPanel: typeof panels[0]) => {
     const newPanels: [typeof panels[0], typeof panels[1]] = [...panels];
@@ -49,6 +58,9 @@ export function DualTabPanel({
           panel={panels[0]}
           onPanelChange={handlePanelChange(0)}
           orientation={orientation}
+          dragState={dragState}
+          dragEvents={dragEvents}
+          allowTabSharing={allowTabSharing}
         />
       </div>
       
@@ -63,6 +75,9 @@ export function DualTabPanel({
           panel={panels[1]}
           onPanelChange={handlePanelChange(1)}
           orientation={orientation}
+          dragState={dragState}
+          dragEvents={dragEvents}
+          allowTabSharing={allowTabSharing}
         />
       </div>
     </div>

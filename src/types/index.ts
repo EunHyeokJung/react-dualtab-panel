@@ -24,6 +24,7 @@ export interface DualTabPanelProps {
   className?: string;
   style?: React.CSSProperties;
   minPanelSize?: number;
+  allowTabSharing?: boolean;
 }
 
 export interface TabContainerProps {
@@ -31,6 +32,9 @@ export interface TabContainerProps {
   onPanelChange: (panel: Panel) => void;
   orientation: Orientation;
   className?: string;
+  dragState?: DragState;
+  dragEvents?: DragEvents;
+  allowTabSharing?: boolean;
 }
 
 export interface PanelSplitterProps {
@@ -45,5 +49,34 @@ export interface TabHeaderProps {
   isActive: boolean;
   onSelect: () => void;
   onClose?: () => void;
-  className?: string;
-} 
+  index: number;
+  panelId: string;
+  dragState?: DragState;
+  dragEvents?: DragEvents;
+  width?: number;
+}
+
+// 드래그앤드롭 관련 타입들
+export interface DragState {
+  isDragging: boolean;
+  draggedTabId: string | null;
+  draggedFromPanelId: string | null;
+  dragOverTabIndex: number | null;
+  dragOverPanelId: string | null;
+}
+
+export interface TabMoveOperation {
+  tabId: string;
+  fromPanelId: string;
+  toPanelId: string;
+  fromIndex: number;
+  toIndex: number;
+}
+
+export interface DragEvents {
+  onDragStart: (e: React.DragEvent, tabId: string, panelId: string) => void;
+  onDragEnd: (e: React.DragEvent) => void;
+  onDragOver: (e: React.DragEvent, targetIndex: number, panelId: string) => void;
+  onDragLeave: (e: React.DragEvent) => void;
+  onDrop: (e: React.DragEvent, targetIndex: number, panelId: string) => void;
+}

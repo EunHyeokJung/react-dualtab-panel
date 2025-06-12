@@ -13,6 +13,9 @@
   display: flex;
   width: 100%;
   height: 100%;
+  min-width: 0; /* 플렉스 축소 허용 */
+  min-height: 0; /* 플렉스 축소 허용 */
+  overflow: hidden; /* 자식 요소가 넘치지 않도록 */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -32,6 +35,8 @@
 .dualtab-panel__panel {
   display: flex;
   flex-direction: column;
+  min-width: 0; /* 플렉스 축소 허용 */
+  min-height: 0; /* 플렉스 축소 허용 */
   overflow: hidden;
 }
 
@@ -53,11 +58,55 @@
   background-color: #f3f4f6;
   border-bottom: 1px solid #e5e7eb;
   min-height: 40px;
+  overflow-x: auto; /* 가로 스크롤 활성화 */
+  overflow-y: hidden;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #d1d5db transparent; /* Firefox */
+  position: relative;
+  padding-left: 3px; /* 첫 번째 탭의 드롭 인디케이터를 위한 여백 */
+}
+
+/* 스크롤 가능한 상태에서의 추가 스타일링 */
+.tab-header--scrollable {
+  overflow-x: auto;
+}
+
+/* 웹킷 기반 브라우저 스크롤바 스타일링 */
+.tab-header::-webkit-scrollbar {
+  height: 3px;
+}
+
+.tab-header::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 1px;
+}
+
+.tab-header::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 1px;
+  transition: background-color 0.2s ease;
+}
+
+.tab-header::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+
+.tab-header--empty {
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border-bottom: 1px dashed #d1d5db;
+}
+
+.tab-header--empty .tab-header__flex-drop-zone {
+  justify-content: center;
+  padding: 0;
 }
 
 .tab-header__item {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   padding: 8px 16px;
   background-color: transparent;
   border: none;
@@ -67,7 +116,11 @@
   color: #6b7280;
   transition: all 0.2s ease;
   position: relative;
-  min-width: 0;
+  min-width: 120px; /* 탭 최소 너비 설정 */
+  max-width: 200px; /* 탭 최대 너비 설정 */
+  flex-shrink: 0; /* 탭이 줄어들지 않도록 */
+  white-space: nowrap; /* 탭 텍스트 줄바꿈 방지 */
+  box-sizing: border-box; /* 패딩 포함한 너비 계산 */
 }
 
 .tab-header__item:hover {
@@ -95,21 +148,25 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  margin-right: 8px;
+  margin-right: 4px; /* Close 버튼과의 간격 조정 */
+  flex: 1; /* 사용 가능한 공간 차지 */
+  min-width: 0; /* 텍스트가 줄어들 수 있도록 */
+  text-align: left; /* 텍스트 왼쪽 정렬 */
 }
 
 .tab-header__close {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
   background-color: transparent;
   border: none;
   cursor: pointer;
   color: #9ca3af;
   transition: all 0.2s ease;
+  margin-left: 4px; /* 텍스트와 간격 */
 }
 
 .tab-header__close:hover {
@@ -117,10 +174,88 @@
   color: #6b7280;
 }
 
+.tab-header__close-icon {
+  pointer-events: none; /* TODO:버튼 클릭 방해 방지용 속성, 제거할지 검토 필요함 */
+}
+
+/* 드래그앤드롭 스타일 */
+.tab-header__item--dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+  cursor: grabbing;
+  z-index: 1000; /* 모든 요소보다 위에 표시 */
+  transition: none; /* 드래그 중 트랜지션 비활성화 */
+  position: relative; /* z-index 적용을 위해 필요 */
+}
+
+.tab-header__item[draggable="true"] {
+  cursor: grab;
+}
+
+.tab-header__item[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.tab-header__drop-indicator {
+  width: 3px;
+  height: 100%;
+  background-color: #3b82f6;
+  border-radius: 1.5px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 20; /* 스크롤 그라데이션보다 위에 표시 */
+  pointer-events: none; /* 드래그 이벤트 방해하지 않도록 */
+}
+
+.tab-header__drop-zone {
+  width: 20px;
+  min-width: 20px;
+  background-color: transparent;
+}
+
+.tab-header__flex-drop-zone {
+  flex: 1;
+  min-width: 80px; /* 드래그 타겟 영역을 더 넓게 */
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0; /* 드롭존도 줄어들지 않도록 */
+}
+
+.tab-header__flex-drop-zone--active {
+  /* 드래그 활성 상태에서 더 넓은 영역 제공 */
+  min-width: 100px;
+  cursor: pointer;
+}
+
 .tab-content {
   flex: 1;
   overflow: auto;
   padding: 16px;
+}
+
+/* Empty panel drop zone styles */
+.tab-content__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #9ca3af;
+  font-size: 14px;
+  background-color: transparent;
+  border: none;
+  transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+.tab-content__empty--drag-active {
+  background-color: #f3f4f6;
+  border: 2px dashed #d1d5db;
+}
+
+.tab-content__empty--drag-over {
+  background-color: #dbeafe;
+  border: 2px dashed #3b82f6;
 }
 
 /* PanelSplitter styles */
@@ -168,54 +303,3 @@
     margin: 3px 0;
   }
 }
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .dualtab-panel {
-    color: #f3f4f6;
-    background-color: #111827;
-  }
-  
-  .tab-container {
-    background-color: #1f2937;
-    border-color: #374151;
-  }
-  
-  .tab-header {
-    background-color: #374151;
-    border-bottom-color: #4b5563;
-  }
-  
-  .tab-header__item {
-    color: #d1d5db;
-    border-right-color: #4b5563;
-  }
-  
-  .tab-header__item:hover {
-    background-color: #4b5563;
-    color: #f3f4f6;
-  }
-  
-  .tab-header__item--active {
-    background-color: #1f2937;
-    color: #f9fafb;
-  }
-  
-  .tab-header__close {
-    color: #9ca3af;
-  }
-  
-  .tab-header__close:hover {
-    background-color: #4b5563;
-    color: #d1d5db;
-  }
-  
-  .panel-splitter {
-    background-color: #4b5563;
-  }
-  
-  .panel-splitter:hover,
-  .panel-splitter--dragging {
-    background-color: #3b82f6;
-  }
-} 
