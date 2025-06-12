@@ -25,6 +25,10 @@ export interface DualTabPanelProps {
   style?: React.CSSProperties;
   minPanelSize?: number;
   allowTabSharing?: boolean;
+  loggerConfig?: {
+    enabled?: boolean;
+    level?: 'debug' | 'info' | 'warn' | 'error';
+  };
 }
 
 export interface TabContainerProps {
@@ -80,3 +84,12 @@ export interface DragEvents {
   onDragLeave: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, targetIndex: number, panelId: string) => void;
 }
+
+// 로깅 시스템 관련 타입들
+export type { 
+  LogLevel, 
+  LogContext, 
+  LoggerConfig, 
+  Logger, 
+  LogEntry 
+} from './logger';

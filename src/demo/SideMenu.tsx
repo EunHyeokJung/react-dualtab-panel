@@ -26,9 +26,12 @@ const menuItems: MenuItem[] = [
   { id: 'settings', title: 'System Settings', icon: '⚙️', category: 'Settings' },
   { id: 'profile', title: 'Profile', icon: '👤', category: 'Settings' },
   { id: 'notifications', title: 'Notifications', icon: '🔔', category: 'Settings' },
+  
+  // Development section
+  { id: 'logger-test', title: 'Logger Test', icon: '🔧', category: 'Development' },
 ];
 
-const categoryOrder = ['Main', 'Management', 'Settings'];
+const categoryOrder = ['Main', 'Management', 'Settings', 'Development'];
 
 export function SideMenu({ onMenuClick }: SideMenuProps) {
   const groupedItems = menuItems.reduce((acc, item) => {

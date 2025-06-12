@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { DualTabPanelProps } from '../../types';
 import { TabContainer } from '../TabContainer';
 import { PanelSplitter } from '../PanelSplitter';
 import { useTabDragDrop } from '../../hooks/useTabDragDrop';
+import { logger } from '../../utils/logger';
 
 export function DualTabPanel({
   panels,
@@ -14,8 +15,18 @@ export function DualTabPanel({
   style,
   minPanelSize = 100,
   allowTabSharing = true,
+  loggerConfig,
 }: DualTabPanelProps) {
   const [splitRatio, setSplitRatio] = useState(defaultSplitRatio);
+  
+  // 로거 설정 적용
+  // Cohesion 원칙: 관련된 설정 로직을 함께 배치
+  useEffect(() => {
+    if (loggerConfig) {
+      logger.configure(loggerConfig);
+    }
+  }, [loggerConfig]);
+  
   const { dragState, dragEvents } = useTabDragDrop({ 
     panels, 
     onPanelsChange, 

@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { Panel, DragState, TabMoveOperation, DragEvents } from '../types';
+import { logValidationFailure } from '../utils/loggerHelpers';
 
 interface UseTabDragDropProps {
   panels: [Panel, Panel];
@@ -35,7 +36,12 @@ export function useTabDragDrop({
     
     // 입력 유효성 검사
     if (!tabId || !fromPanelId || !toPanelId || fromIndex < 0 || toIndex < 0) {
-      console.warn('useTabDragDrop: Invalid operation parameters', operation);
+      logValidationFailure(
+        'useTabDragDrop',
+        'moveTab',
+        { ...operation } as Record<string, unknown>,
+        'Invalid operation parameters - missing required fields or negative indices'
+      );
       return;
     }
     
@@ -44,7 +50,12 @@ export function useTabDragDrop({
     const toPanelIndex = panels.findIndex(panel => panel.id === toPanelId);
     
     if (fromPanelIndex === -1 || toPanelIndex === -1) {
-      console.warn('useTabDragDrop: Panel not found', { fromPanelId, toPanelId });
+      logValidationFailure(
+        'useTabDragDrop',
+        'moveTab',
+        { fromPanelId, toPanelId },
+        'Panel not found'
+      );
       return;
     }
     

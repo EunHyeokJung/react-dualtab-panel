@@ -16,6 +16,7 @@ import {
   Profile, 
   Notifications 
 } from './PageComponents';
+import { LoggerTestPanel } from './LoggerTestPanel';
 import '../styles/index.css';
 
 // Page component mapping
@@ -30,6 +31,7 @@ const getPageComponent = (menuId: string): React.ReactNode => {
     case 'settings': return <Settings />;
     case 'profile': return <Profile />;
     case 'notifications': return <Notifications />;
+    case 'logger-test': return <LoggerTestPanel />;
     default: return <div style={{ padding: '20px' }}>Page not found.</div>;
   }
 };
@@ -232,6 +234,10 @@ export function DemoApp() {
               orientation={orientation}
               defaultSplitRatio={0.6}
               allowTabSharing={allowTabSharing}
+              loggerConfig={{
+                enabled: true,
+                level: 'debug'
+              }}
             />
           </div>
         </div>

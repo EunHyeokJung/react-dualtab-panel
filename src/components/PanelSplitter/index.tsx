@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import type { PanelSplitterProps } from '../../types';
+import { logComponentError, logValidationFailure } from '../../utils/loggerHelpers';
 
 export function PanelSplitter({
   orientation,
@@ -23,7 +24,12 @@ export function PanelSplitter({
     const container = (e.target as HTMLElement).parentElement;
     
     if (!container) {
-      console.warn('PanelSplitter: Container element not found');
+      logValidationFailure(
+        'PanelSplitter',
+        'handleMouseDown',
+        { target: e.target },
+        'Container element not found'
+      );
       return;
     }
     
@@ -62,7 +68,12 @@ export function PanelSplitter({
         document.body.style.cursor = '';
         document.body.style.userSelect = '';
       } catch (error) {
-        console.warn('PanelSplitter: Error cleaning up event listeners', error);
+        logComponentError(
+          'PanelSplitter',
+          'handleMouseUp',
+          error,
+          { context: 'Event listener cleanup' }
+        );
       }
     };
 
